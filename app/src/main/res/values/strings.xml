@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PatternMatch</string>
+    <string name="game_name">Pattern Match</string>
+    <string name="button_new_game_text">New Game</string>
+    <string name="button_time_challenge_text">Time Challenge</string>
+    <string name="button_how_to_play_text">How To Play</string>
+    <string name="start_game_prompt">Start a new game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>
