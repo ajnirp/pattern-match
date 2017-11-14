@@ -27,6 +27,8 @@ public class GameActivity extends AppCompatActivity {
     private int cumulativeScore;
     private SQLiteDatabase mDB;
 
+    // Hello
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
