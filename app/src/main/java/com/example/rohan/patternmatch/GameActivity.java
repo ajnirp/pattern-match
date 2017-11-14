@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -15,9 +16,9 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<Integer> mParentValues;
     private ArrayList<Integer> mChildrenColors;
     private ArrayList<Integer> mChildrenValues;
-    private int gameID;
+    private int mGameID;
 
-    final private int NUM_COLS = 20;
+    private int num_columns;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +33,29 @@ public class GameActivity extends AppCompatActivity {
         renderUI();
     }
 
+    // B
     private void renderUI() {
-        ViewGroup layout = (ViewGroup) findViewById(R.id.game_view);
-        for (int i = 0; i < NUM_COLS; i++) {
+        LinearLayout layout = (LinearLayout) findViewById(R.id.game_view);
+        LinearLayout.LayoutParams layoutParams =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                              LinearLayout.LayoutParams.WRAP_CONTENT);
+        for (int i = 0; i < num_columns; i++) {
             Button button = new Button(this);
-            button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            layout.addView(button, layoutParams);
         }
+    }
+
+    // R
+    private void updateLists() {
+        boolean isValid = checkValidity();
+        if (!isValid) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Invalid configuration", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    // B
+    private boolean checkValidity() {
+        return false;
     }
 }
