@@ -80,4 +80,16 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp" />
 
+    <GridLayout
+        android:id="@+id/parents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </GridLayout>
+
+    <GridLayout
+        android:id="@+id/children"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </GridLayout>
+
 </RelativeLayout>

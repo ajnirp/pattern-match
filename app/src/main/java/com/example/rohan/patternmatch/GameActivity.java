@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -17,17 +18,50 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<Integer> mParentColors;
     private int mGameID;
 
-    private int num_columns;
+    private int mNumColumns;
 
     private ArrayList<String> mParentValues;
-    private ArrayList<String> mChildrenColors;
+    private ArrayList<ArrayList<Integer>> mChildrenColors;
     private ArrayList<String> mChildrenValues;
     
     private int mPlayerLevel;
     private int cumulativeScore;
     private SQLiteDatabase mDB;
 
-    // Hello
+    private void setButtonIcon(Button btn, int row, int col, ArrayList<Integer> colors, ArrayList<String> values) {
+        int[] resources = {R.drawable.c1, R.drawable.c2, R.drawable.c3, R.drawable.c4,
+                R.drawable.c5, R.drawable.d1, R.drawable.d2, R.drawable.d3, R.drawable.d4,
+                R.drawable.d5};
+        char value = values.get(row).charAt(col);
+        int resource = resources[(value == 'A' ? 0 : 1)*5 + colors.get(col)];
+        btn.setBackgroundResource(resource);
+    }
+
+    private void generateButtons(ArrayList<String> parents) {
+        GridLayout gl = (GridLayout) findViewById(R.id.parents);
+        gl.setColumnCount(mNumColumns);
+
+        int numRows = 5; // TODO: the number of parent strings depends on the game ID
+        GridLayout.LayoutParams lp = (GridLayout.LayoutParams) new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < mNumColumns; j++) {
+                Button btn = new Button(this);
+                setButtonIcon(btn, i, j, mParentColors, mParentValues);
+                btn.setLayoutParams(lp);
+                gl.addView(btn);
+            }
+        }
+
+        int numChildren = 5; // TODO: the number of children strings depends on the game ID
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < mNumColumns; j++) {
+                Button btn = new Button(this);
+                btn.setLayoutParams(lp);
+                gl.addView(btn);
+            }
+        }
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +71,14 @@ public class GameActivity extends AppCompatActivity {
         mDB = this.openOrCreateDatabase("gameDatabase", Context.MODE_PRIVATE, null);
 //        setupGameFromDB();
 
+        int numChildren = 20;
+
         mParentColors = new ArrayList<Integer>(5);
         mParentValues = new ArrayList<String>(5);
-        mChildrenColors = new ArrayList<String>(20);
+        mChildrenColors = new ArrayList<ArrayList<Integer>>(numChildren);
+        for (int i = 0; i < numChildren; i++) {
+            mChildrenColors.set(i, new ArrayList<Integer>(20));
+        }
         mChildrenValues = new ArrayList<String>(20);
 
         updateUI();
@@ -47,7 +86,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void updateUI() {
         ViewGroup layout = (ViewGroup) findViewById(R.id.game_view);
-        for (int i = 0; i < num_columns; i++) {
+        for (int i = 0; i < mNumColumns; i++) {
             Button button = new Button(this);
 //            layout.addView(button, layoutParams);
         }
