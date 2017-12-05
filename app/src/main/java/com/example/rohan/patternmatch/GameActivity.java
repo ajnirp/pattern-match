@@ -38,7 +38,8 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<String> mChildrenValues;
 	
 	private ArrayList<ArrayList<String>> mMoveHistory;
-	
+
+    private ArrayList<Integer> mParentButtonIDs;
 	private ArrayList<Integer> mChildButtonIDs;
 
     private ArrayList<Integer> mScores;
@@ -162,6 +163,11 @@ public class GameActivity extends AppCompatActivity {
         for(int i = 0; i < mNumChildren*mNumColumns; i++) {
             mChildButtonIDs.add(-1);
         }
+
+        mParentButtonIDs = new ArrayList<Integer>(mNumParents*mNumColumns);
+        for(int i = 0; i < mNumParents*mNumColumns; i++) {
+            mParentButtonIDs.add(-1);
+        }
 	}
 	
 	private void loadParentsFromDB() {
@@ -224,42 +230,88 @@ public class GameActivity extends AppCompatActivity {
 
     private void generateButtons() {
         GridLayout gl = (GridLayout) findViewById(R.id.parents);
-        gl.setRowCount(mNumParents);
         gl.setColumnCount(mNumColumns);
 
-//        GridLayout.LayoutParams lp = (GridLayout.LayoutParams) new ViewGroup.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-//        params.height = 10;
-//        params.width = 10;
+        GridLayout.LayoutParams lp = (GridLayout.LayoutParams) new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i = 0; i < mNumParents; i++) {
-			String parent = mParentValues.get(i);
-			int color = mParentColors.get(i);
+            String parent = mParentValues.get(i);
+            int color = mParentColors.get(i);
             for (int j = 0; j < mNumColumns; j++) {
                 Button btn = new Button(this);
+                int currentID = View.generateViewId();
+                mChildButtonIDs.set(i*mNumColumns+j, currentID);
+                btn.setId(currentID);
                 setButtonIcon(btn, parent.charAt(j), color);
-//                btn.setLayoutParams(params);
+                setParentClickListener(btn);
+                btn.setLayoutParams(lp);
                 gl.addView(btn);
             }
         }
-
-        gl = (GridLayout) findViewById(R.id.parents);
-        gl.setRowCount(mNumChildren);
-        gl.setColumnCount(mNumColumns);
 
         for (int i = 0; i < mNumChildren; i++) {
-			String child = mChildrenValues.get(i);
-			ArrayList<Integer> childColors = mChildrenColors.get(i);
+            String child = mChildrenValues.get(i);
+            ArrayList<Integer> childColors = mChildrenColors.get(i);
             for (int j = 0; j < mNumColumns; j++) {
                 Button btn = new Button(this);
-				int currentID = View.generateViewId();
-                mChildButtonIDs.set(i * mNumColumns + j, currentID);
-				btn.setId(currentID);
-				setButtonIcon(btn, child.charAt(j), childColors.get(j));
-//                btn.setLayoutParams(params);
+                int currentID = View.generateViewId();
+                mChildButtonIDs.set(i*mNumColumns+j, currentID);
+                btn.setId(currentID);
+                setButtonIcon(btn, child.charAt(j), childColors.get(j));
+                setChildClickListener(btn);
+                btn.setLayoutParams(lp);
                 gl.addView(btn);
             }
         }
+    }
+
+    private void setParentClickListener(Button btn) {
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (startPos == -1 || endPos == -1 || fromChild == -1) {
+                    return;
+                } else {
+                    toParent = mParentButtonIDs.indexOf(v.getId())/mNumColumns;
+                    String sourceChild = mChildrenValues.get(fromChild);
+                    String destParent = mParentValues.get(toParent);
+                    String newParent = destParent.substring(0, startPos) + sourceChild.substring(startPos,endPos+1);
+                    if (endPos+1 < destParent.length()) {
+                        newParent += destParent.substring(endPos+1);
+                    }
+
+                    boolean isValid = checkValidity(newParent);
+                    if (!isValid) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Invalid configuration", Toast.LENGTH_SHORT);
+                        toast.show();
+                    } else {
+                        mParentValues.set(toParent, newParent);
+                        startPos = -1;
+                        endPos = -1;
+                        fromChild = -1;
+                    }
+                }
+            }
+        });
+    }
+
+    private void setChildClickListener(Button btn) {
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                buttonIndex = mChildButtonIDs.indexOf(v.getId());
+                if(startPos == -1 || startPos != -1 && endPos != -1) {
+                    fromChild = buttonIndex/mNumColumns;
+                    startPos = buttonIndex % mNumColumns;
+                } else if(endPos == -1) {
+                    int newChild = buttonIndex/mNumColumns;
+                    if (newChild == fromChild) {
+                        endPos = buttonIndex % mNumColumns;
+                    } else {
+                        fromChild = buttonIndex/mNumColumns;
+                        startPos = buttonIndex % mNumColumns;
+                    }
+                }
+            }
+        });
     }
 
     private void setButtonIcon(Button btn, char value, int color) {
@@ -283,17 +335,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    // R
-    private void updateLists() {
-        boolean isValid = checkValidity();
-        if (!isValid) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Invalid configuration", Toast.LENGTH_SHORT);
-            toast.show();
-        } else {
-			mMoveHistory.add(mParentValues);
-		}
-    }
-
 	private void undoMove(View v) {
 		if(mMoveHistory.size() > 0) {
 			mParentValues = mMoveHistory.get(mMoveHistory.size()-1);
@@ -313,41 +354,30 @@ public class GameActivity extends AppCompatActivity {
 		scoreModel();
         generateButtons();		
 	}
-	
-    private boolean checkValidity() {
-		if (fromChild == -1 || toParent == -1 || startPos >= endPos) {
-			return false;
-		} else {
-			String sourceChild = mChildrenValues.get(fromChild);
-			String destParent = mParentValues.get(toParent);
-			String newParent = destParent.substring(0, startPos) + sourceChild.substring(startPos,endPos+1);
-			if (endPos+1 < destParent.length()) {
-				newParent += destParent.substring(endPos+1);
-			}
-			
-			for(int i = 0; i < destParent.length(); i++) {
-				boolean aPresent = false;
-				boolean cPresent = false;
-				for(int j = 0; j < mNumParents; j++) {
-					char charCheck;
-					if (j == toParent) {
-						charCheck = newParent.charAt(i);
-					} else {
-						charCheck = mParentValues.get(j).charAt(i);
-					}
-					
-					if(charCheck == 'A') {
-						aPresent = true;
-					} else if(charCheck == 'C') {
-						cPresent = true;
-					}
-				}
-				if(!aPresent || !cPresent) {
-					return false;
-				}
-			}
-			return true;
-		}
+
+    private boolean checkValidity(String newParent) {
+        for(int i = 0; i < newParent.length(); i++) {
+            boolean aPresent = false;
+            boolean cPresent = false;
+            for(int j = 0; j < mNumParents; j++) {
+                char charCheck;
+                if (j == toParent) {
+                    charCheck = newParent.charAt(i);
+                } else {
+                    charCheck = mParentValues.get(j).charAt(i);
+                }
+
+                if(charCheck == 'A') {
+                    aPresent = true;
+                } else if(charCheck == 'C') {
+                    cPresent = true;
+                }
+            }
+            if(!aPresent || !cPresent) {
+                return false;
+            }
+        }
+        return true;
     }
 
 	private void saveGame(View v) {
