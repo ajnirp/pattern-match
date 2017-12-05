@@ -6,11 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center_horizontal"
     tools:context="com.example.rohan.patternmatch.GameActivity">
 
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"
+        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -36,6 +39,13 @@
             android:text="RESET" />
 
         <Button
+            android:id="@+id/playpause"
+            android:onClick="toggle"
+            android:text="⏯"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/saveGame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,38 +55,54 @@
 
     <GridLayout
         android:id="@+id/parents"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/pause"
-        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="20dp"
         />
 
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Best Score: " />
+
         <TextView
             android:id="@+id/highScore"
             android:layout_marginRight="20dp"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="High Score" />
+            android:text="Current Score: " />
 
         <TextView
             android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Score"
             android:id="@+id/score" />
+
+        <Chronometer
+            android:layout_marginLeft="20dp"
+            android:id="@+id/chrono"
+            android:countDown="false"
+            android:format="Time: %s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
     <GridLayout
         android:id="@+id/children"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/score"
-        android:layout_alignParentLeft="true">
+        android:layout_height="wrap_content">
     </GridLayout>
 
 </LinearLayout>
