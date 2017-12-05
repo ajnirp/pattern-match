@@ -33,6 +33,8 @@ public class StartNewGameDialogFragment extends DialogFragment {
 
     private void startNewGame() {
         Intent intent = new Intent(getActivity(), GameActivity.class);
+        int gameID = -1;
+        intent.putExtra("GAME_ID", gameID);
         startActivity(intent);
     }
 }

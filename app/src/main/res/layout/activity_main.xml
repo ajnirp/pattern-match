@@ -21,21 +21,21 @@
         android:id="@+id/button_new_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_new_game_text"
+        android:text="New Game"
         android:onClick="newGame" />
 
     <Button
         android:id="@+id/button_time_challenge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_time_challenge_text"
-        android:onClick="timeChallenge" />
+        android:text="Load Game"
+        android:onClick="loadGame" />
 
     <Button
         android:id="@+id/button_how_to_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_how_to_play_text"
+        android:text="How to Play"
         android:onClick="howToPlay" />
 
 </LinearLayout>

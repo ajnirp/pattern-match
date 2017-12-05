@@ -1,95 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/game_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.rohan.patternmatch.GameActivity">
 
-    <ImageButton
-        android:id="@+id/pause"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:src="@android:drawable/ic_media_pause"
-        android:onClick="pauseGame"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/resume"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:src="@android:drawable/ic_media_play"
-        android:onClick="resumeGame"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        <Button
+            android:id="@+id/backToMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="backToMain"
+            android:text="MAIN" />
 
-    <Button
-        android:id="@+id/backToMain"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:textSize="8dp"
-        android:text="MAIN"
-        android:onClick="backToMain"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        <Button
+            android:id="@+id/undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="undoMove"
+            android:text="UNDO" />
 
-    <Button
-        android:id="@+id/undo"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:textSize="8dp"
-        android:text="UNDO"
-        android:onClick="undo"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="40dp"
-        />
+        <Button
+            android:id="@+id/reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="resetGame"
+            android:text="RESET" />
 
-    <Button
-        android:id="@+id/reset"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:textSize="8dp"
-        android:text="RESET"
-        android:onClick="reset"
-        android:layout_below="@+id/undo"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="timer" android:id="@+id/timer"
-        android:layout_below="@+id/reset"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="highSc" android:id="@+id/highScore"
-        android:layout_below="@+id/timer"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="persHS" android:id="@+id/personalHighScore"
-        android:layout_below="@+id/highScore"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="score" android:id="@+id/score"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp" />
+        <Button
+            android:id="@+id/saveGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="saveGame"
+            android:text="Save" />
+    </LinearLayout>
 
     <GridLayout
         android:id="@+id/parents"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pause"
+        android:layout_alignParentLeft="true"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </GridLayout>
+        <TextView
+            android:id="@+id/highScore"
+            android:layout_marginRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="High Score" />
+
+        <TextView
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score"
+            android:id="@+id/score" />
+    </LinearLayout>
 
     <GridLayout
         android:id="@+id/children"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/score"
+        android:layout_alignParentLeft="true">
     </GridLayout>
 
-</RelativeLayout>
+</LinearLayout>
