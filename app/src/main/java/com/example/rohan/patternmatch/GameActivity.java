@@ -250,6 +250,8 @@ public class GameActivity extends AppCompatActivity {
 
         if(mCumulativeScore < mHighScore) {
             mHighScore = mCumulativeScore;
+            Toast toast = Toast.makeText(getApplicationContext(), "New high score!!", Toast.LENGTH_SHORT);
+            toast.show();
         }
         TextView highScore = (TextView) findViewById(R.id.highScore);
         highScore.setText(String.valueOf(Math.min(mCumulativeScore, mHighScore)));
