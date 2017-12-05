@@ -2,11 +2,10 @@ package com.example.rohan.patternmatch;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -40,7 +39,7 @@ public class GameActivity extends AppCompatActivity {
 	
 	private ArrayList<ArrayList<String>> mMoveHistory;
 	
-	private ArrayList<Integer> mButtonIDs;
+	private ArrayList<Integer> mChildButtonIDs;
 
     private ArrayList<Integer> mScores;
     private int mCumulativeScore;
@@ -49,6 +48,8 @@ public class GameActivity extends AppCompatActivity {
 	private int endPos = -1;
 	private int fromChild = -1;
 	private int toParent = -1;
+
+	private CountDownTimer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,9 +158,9 @@ public class GameActivity extends AppCompatActivity {
             mChildrenColors.add(new ArrayList<Integer>());
         }
 
-		mButtonIDs = new ArrayList<Integer>();
+		mChildButtonIDs = new ArrayList<Integer>();
         for(int i = 0; i < mNumChildren*mNumColumns; i++) {
-            mButtonIDs.add(-1);
+            mChildButtonIDs.add(-1);
         }
 	}
 	
@@ -252,7 +253,7 @@ public class GameActivity extends AppCompatActivity {
             for (int j = 0; j < mNumColumns; j++) {
                 Button btn = new Button(this);
 				int currentID = View.generateViewId();
-                mButtonIDs.set(i * mNumColumns + j, currentID);
+                mChildButtonIDs.set(i * mNumColumns + j, currentID);
 				btn.setId(currentID);
 				setButtonIcon(btn, child.charAt(j), childColors.get(j));
 //                btn.setLayoutParams(params);
