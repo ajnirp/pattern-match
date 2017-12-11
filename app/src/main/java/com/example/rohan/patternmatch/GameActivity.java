@@ -26,6 +26,9 @@ public class GameActivity extends AppCompatActivity {
     private final int[] resources = {R.drawable.c1, R.drawable.c2, R.drawable.c3, R.drawable.c4,
                 R.drawable.c5, R.drawable.d1, R.drawable.d2, R.drawable.d3, R.drawable.d4,
                 R.drawable.d5};
+    private final int[] resourcesSelect = {R.drawable.c1s, R.drawable.c2s, R.drawable.c3s, R.drawable.c4s,
+            R.drawable.c5s, R.drawable.d1s, R.drawable.d2s, R.drawable.d3s, R.drawable.d4s,
+            R.drawable.d5s};
 	private Random mRNG = new Random();
 	
     private SQLiteDatabase mDB;
@@ -114,6 +117,7 @@ public class GameActivity extends AppCompatActivity {
 		int gamesPlayed = Integer.valueOf(c.getString(1));
 		Log.v("Tag: ", "Game: " + String.valueOf(gamesPlayed));
 		mPlayerLevel = gamesPlayed/50 + 1;
+		mPlayerLevel = 10;
 
 		c = mDB.rawQuery("SELECT children, columns from LevelStats where level = " + String.valueOf(mPlayerLevel), null);
 		c.moveToFirst();
@@ -234,7 +238,7 @@ public class GameActivity extends AppCompatActivity {
                     if (currChildColors.get(j) != mParentColors.get(maxParent)) {
                         currChildColors.set(j, mParentColors.get(maxParent));
                         if(mChildButtonIDs.size() > i*mNumColumns+j)
-                            setButtonIcon((Button)findViewById(mChildButtonIDs.get(i*mNumColumns+j)), currChild.charAt(j), mParentColors.get(maxParent));
+                            setButtonIcon((Button)findViewById(mChildButtonIDs.get(i*mNumColumns+j)), currChild.charAt(j), mParentColors.get(maxParent), false);
                     }
 				}
                 doneSoFar += maxMatch;
@@ -274,7 +278,7 @@ public class GameActivity extends AppCompatActivity {
                 mParentButtonIDs.add(currentID);
                 btn.setId(currentID);
                 btn.setLayoutParams(params);
-                setButtonIcon(btn, parent.charAt(j), color);
+                setButtonIcon(btn, parent.charAt(j), color, false);
                 setParentClickListener(btn);
                 glParent.addView(btn);
             }
@@ -291,7 +295,7 @@ public class GameActivity extends AppCompatActivity {
                 mChildButtonIDs.add(currentID);
                 btn.setId(currentID);
                 btn.setLayoutParams(params);
-                setButtonIcon(btn, child.charAt(j), childColors.get(j));
+                setButtonIcon(btn, child.charAt(j), childColors.get(j), false);
                 setChildClickListener(btn);
                 glChildren.addView(btn);
             }
@@ -333,6 +337,8 @@ public class GameActivity extends AppCompatActivity {
                         scoreModel();
                         updateButtons(oldParents);
                     }
+                    setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+startPos)), sourceChild.charAt(startPos), mChildrenColors.get(fromChild).get(startPos), false);
+                    setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+endPos)), sourceChild.charAt(endPos),  mChildrenColors.get(fromChild).get(endPos), false);
                     startPos = -1;
                     endPos = -1;
                     fromChild = -1;
@@ -346,31 +352,46 @@ public class GameActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int buttonIndex = mChildButtonIDs.indexOf(v.getId());
                 if(startPos == -1 || startPos != -1 && endPos != -1) {
+                    if (endPos != -1) {
+                        setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+startPos)), mChildrenValues.get(fromChild).charAt(startPos), mChildrenColors.get(fromChild).get(startPos), false);
+                        setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+endPos)), mChildrenValues.get(fromChild).charAt(endPos), mChildrenColors.get(fromChild).get(endPos), false);
+                        endPos = -1;
+                    }
                     fromChild = buttonIndex/mNumColumns;
                     startPos = buttonIndex % mNumColumns;
+                    setButtonIcon((Button)findViewById(v.getId()), mChildrenValues.get(fromChild).charAt(startPos), mChildrenColors.get(fromChild).get(startPos), true);
                 } else if(endPos == -1) {
                     int newChild = buttonIndex/mNumColumns;
                     if (newChild == fromChild) {
                         if((buttonIndex % mNumColumns) < startPos) {
                             Toast toast = Toast.makeText(getApplicationContext(), "Invalid configuration", Toast.LENGTH_SHORT);
                             toast.show();
+                            setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+startPos)), mChildrenValues.get(fromChild).charAt(startPos), mChildrenColors.get(fromChild).get(startPos), false);
                             startPos = -1;
                             endPos = -1;
                             fromChild = -1;
                         } else {
                             endPos = buttonIndex % mNumColumns;
+                            setButtonIcon((Button)findViewById(v.getId()), mChildrenValues.get(fromChild).charAt(endPos), mChildrenColors.get(fromChild).get(endPos), true);
                         }
                     } else {
+                        setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+startPos)), mChildrenValues.get(fromChild).charAt(startPos), mChildrenColors.get(fromChild).get(startPos), false);
                         fromChild = buttonIndex/mNumColumns;
                         startPos = buttonIndex % mNumColumns;
+                        setButtonIcon((Button)findViewById(v.getId()), mChildrenValues.get(fromChild).charAt(startPos), mChildrenColors.get(fromChild).get(startPos), true);
                     }
                 }
             }
         });
     }
 
-    private void setButtonIcon(Button btn, char value, int color) {
-        int resource = resources[(value == 'A' ? 0 : 1)*mNumParents + color];
+    private void setButtonIcon(Button btn, char value, int color, boolean selected) {
+        int resource;
+        if(selected) {
+            resource = resourcesSelect[(value == 'A' ? 0 : 1)*mNumParents + color];
+        } else {
+            resource = resources[(value == 'A' ? 0 : 1)*mNumParents + color];
+        }
         btn.setBackgroundResource(resource);
     }
 
@@ -400,34 +421,26 @@ public class GameActivity extends AppCompatActivity {
             toast.show();
 		}
 	}
-	
-	public void resetGame(View v) {
+
+    public void resetGame(View v) {
         ArrayList<String> oldParents = new ArrayList<String>();
         for(int i = 0; i < mNumParents; i++) {
             oldParents.add(mParentValues.get(i));
         }
-		setupChildrenAndParents();
-        String[] defP = {"", ""};
-        for (int i = 0; i < mNumParents; i++) {
-            if (i < 2) {
-                for (int j = 0; j < mNumColumns; j++) {
-                    if ((i + j) % 2 == 0) {
-                        defP[i] += 'A';
-                    } else {
-                        defP[i] += 'C';
-                    }
-                }
-                mParentValues.add(defP[i]);
-            } else {
-                mParentValues.add(mChildrenValues.get(i));
+        if (startPos != -1) {
+            setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+startPos)), mChildrenValues.get(fromChild).charAt(startPos), mChildrenColors.get(fromChild).get(startPos), false);
+            if (endPos != -1) {
+                setButtonIcon((Button)findViewById(mChildButtonIDs.get(fromChild*mNumColumns+endPos)), mChildrenValues.get(fromChild).charAt(endPos), mChildrenColors.get(fromChild).get(endPos), false);
             }
         }
-		scoreModel();
+
+        setupChildrenAndParents();
+        scoreModel();
         updateButtons(oldParents);
         mChronometer.setBase(SystemClock.elapsedRealtime());
         Toast toast = Toast.makeText(getApplicationContext(), "Game reset!!", Toast.LENGTH_SHORT);
         toast.show();
-	}
+    }
 
     private boolean checkValidity(String newParent) {
         for(int i = 0; i < newParent.length(); i++) {
@@ -497,7 +510,7 @@ public class GameActivity extends AppCompatActivity {
 		String deleteQuery = "DELETE FROM SavedGames WHERE gid = " + String.valueOf(mGameID);
 		mDB.execSQL(deleteQuery);
 		
-		String insertQuery = "INSERT INTO SavesGames VALUES (" + String.valueOf(mGameID);
+		String insertQuery = "INSERT INTO SavedGames VALUES (" + String.valueOf(mGameID);
 		for(int i=0; i < mNumParents; i++) {
 			insertQuery += ",'" + mParentValues.get(i) + "'";
 		}
@@ -514,7 +527,7 @@ public class GameActivity extends AppCompatActivity {
                 String newP = mParentValues.get(i);
                 for(int j = 0; j < oldP.length(); j++) {
                     if(oldP.charAt(j) != newP.charAt(j)) {
-                        setButtonIcon((Button)findViewById(mParentButtonIDs.get(i*mNumColumns+j)), newP.charAt(j), mParentColors.get(i));
+                        setButtonIcon((Button)findViewById(mParentButtonIDs.get(i*mNumColumns+j)), newP.charAt(j), mParentColors.get(i), false);
                     }
                 }
             }
