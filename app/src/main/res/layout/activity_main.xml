@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Time challenge"
-        android:onClick="loadGame" />
+        android:onClick="timeChallenge" />
 
     <Button
         android:id="@+id/button_how_to_play"

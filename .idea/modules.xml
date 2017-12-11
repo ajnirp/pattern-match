@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PatternMatch.iml" filepath="$PROJECT_DIR$/PatternMatch.iml" />
+      <module fileurl="file:///csbiohome01/bdvyas/AndroidStudioProjects/pattern-match/app/app.iml" filepath="/csbiohome01/bdvyas/AndroidStudioProjects/pattern-match/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pattern-match.iml" filepath="$PROJECT_DIR$/pattern-match.iml" />
     </modules>
   </component>
 </project>
