@@ -12,15 +12,15 @@ import android.os.Bundle;
  */
 
 // https://developer.android.com/guide/topics/ui/dialogs.html
-public class StartNewGameDialogFragment extends DialogFragment {
+public class StartTCGameDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.start_game_prompt)
+        builder.setMessage(R.string.time_challenge_prompt)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        startNewGame();
+                        startNewTCGame();
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -31,10 +31,10 @@ public class StartNewGameDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    private void startNewGame() {
+    private void startNewTCGame() {
         Intent intent = new Intent(getActivity(), GameActivity.class);
         int gameID = -1;
-        boolean timeChallenge = false;
+        boolean timeChallenge = true;
         intent.putExtra("GAME_ID", gameID);
         intent.putExtra("TIME_CHALLENGE", timeChallenge);
         startActivity(intent);

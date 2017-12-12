@@ -1,8 +1,10 @@
 package com.example.rohan.patternmatch;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,31 +14,45 @@ import android.os.Bundle;
  */
 
 // https://developer.android.com/guide/topics/ui/dialogs.html
-public class StartNewGameDialogFragment extends DialogFragment {
+public class TCTimeUpDialogFragment extends DialogFragment {
+    public static interface OnCompleteListener {
+        public abstract void onAnswer(String time);
+    }
+
+    private OnCompleteListener mListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        Activity a;
+
+        if (context instanceof Activity){
+            a=(Activity) context;
+            try {
+                this.mListener = (OnCompleteListener)a;
+            }
+            catch (final ClassCastException e) {
+                throw new ClassCastException(a.toString() + " must implement OnCompleteListener");
+            }
+        }
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.start_game_prompt)
+        builder.setMessage(R.string.time_up)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        startNewGame();
+                        mListener.onAnswer("yes");
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        mListener.onAnswer("no");
                     }
                 });
         return builder.create();
-    }
-
-    private void startNewGame() {
-        Intent intent = new Intent(getActivity(), GameActivity.class);
-        int gameID = -1;
-        boolean timeChallenge = false;
-        intent.putExtra("GAME_ID", gameID);
-        intent.putExtra("TIME_CHALLENGE", timeChallenge);
-        startActivity(intent);
     }
 }

@@ -122,10 +122,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void timeChallenge(View v) {
-        // TODO
+        DialogFragment frag = new StartTCGameDialogFragment();
+        frag.show(getFragmentManager(), "new game");
     }
 
     public void howToPlay(View v) {
-        // TODO
+        Intent intent = new Intent(this, HowToPlayActivity.class);
+        startActivity(intent);
     }
 }

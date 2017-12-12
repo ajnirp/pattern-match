@@ -3,7 +3,19 @@
     <string name="game_name">Pattern Match</string>
 
     <string name="start_game_prompt">Start a new game?</string>
+    <string name="load_game_prompt">Load a saved game?</string>
+    <string name="time_challenge_prompt">Start a new time challenge?</string>
+    <string name="time_up">Time is up! Would you like to save your game to work on it later?</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="howToPlayText">The idea behind the game is to create a pattern of two shapes at the top (parents) that can explain as many of the patterns below (children) as possible. The best possible parent pattern(s) are automatically selected to explain each child pattern with as few transitions as possible.
+The user can select one or more series of patterns from a child by clicking on the starting point, followed by clicking on the ending point. The following set of rules need to be followed:
+1. The starting point and the ending point must be on the same child pattern.
+2. The starting point has to be before the ending point.
+
+Once the starting and ending point have been selected, the user can click anywhere on the parent they would like to move this pattern to. The corresponding columns of the parent pattern will be updated to reflect this change. The change to the parent pattern must not reduce the number of different shapes that are represented in that column of shapes in the parent patterns.
+
+The following video is a demo of the game being played, along with the moves that are not allowed by the gameplay rules:
+</string>
 </resources>
