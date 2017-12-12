@@ -3,6 +3,7 @@ package com.example.rohan.patternmatch;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,8 +22,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private SQLiteDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("tag", "onCreate");
         parseAndSetupDatabase();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -34,19 +38,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void parseAndSetupDatabase() {
-        if (databaseExists(this, "Games.db")) {
-            Log.v("tag", "parseAndSetupDatabase: Games.db already exists, early return");
-            return;
-        }
+//        if (databaseExists(this, "Games.db")) {
+//            Log.v("tag", "parseAndSetupDatabase: Games.db already exists, early return");
+//            return;
+//        }
 
-        SQLiteDatabase db = openOrCreateDatabase("Games.db", Context.MODE_PRIVATE, null);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("DBScript.txt")))) {
+        Log.v("tag", "beginning");
+        db = openOrCreateDatabase("Games.db", Context.MODE_PRIVATE, null);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("createTables.txt")))) {
             String line;
             while ((line = br.readLine()) != null) {
                 db.execSQL(line);
             }
+            Log.v("tag", "hi 1");
         } catch (Exception e) {
-            Log.v("tag", "parseAndSetupDatabase: failed to find or parse Games.txt");
+            Log.v("tag", "couldn't find");
+        }
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("populateChildren.txt")))) {
+            ArrayList<String> lines = new ArrayList<String>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+            try {
+                db.beginTransaction();
+                for (int i = 0; i < lines.size(); i++) {
+                    ContentValues vals = new ContentValues();
+                    vals.put("cid", i);
+                    vals.put("kmer", lines.get(i));
+                    db.insert("Children", null, vals);
+                }
+                db.setTransactionSuccessful();
+                Log.v("tag", "hi 2");
+            } catch (Exception e) {}
+            finally {
+                db.endTransaction();
+            }
+        } catch (Exception e) {}
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("populateGame.txt")))) {
+            ArrayList<String> lines = new ArrayList<String>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+            try {
+                db.beginTransaction();
+                for (int i = 0; i < lines.size(); i++) {
+//                    Log.v("tag", Integer.toString(i));
+                    String[] split = lines.get(i).split(" ");
+                    int gid = Integer.valueOf(split[0]);
+                    int cid = Integer.valueOf(split[1]);
+                    int level = Integer.valueOf(split[2]);
+                    Log.v("tag", Integer.toString(gid));
+                    ContentValues vals = new ContentValues();
+                    vals.put("gid", gid);
+                    vals.put("cid", cid);
+                    vals.put("level", level);
+                    db.insert("Games", null, vals);
+                }
+                db.setTransactionSuccessful();
+                Log.v("tag", "hi 3");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
+                db.endTransaction();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
