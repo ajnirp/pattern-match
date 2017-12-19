@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
             while ((line = br.readLine()) != null) {
                 db.execSQL(line);
             }
-            Log.v("tag", "hi 1");
+            Log.v("tag", "createTables");
         } catch (Exception e) {
-            Log.v("tag", "couldn't find");
+            Log.v("tag", e.toString());
         }
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("populateChildren.txt")))) {
@@ -70,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
                     db.insert("Children", null, vals);
                 }
                 db.setTransactionSuccessful();
-                Log.v("tag", "hi 2");
-            } catch (Exception e) {}
+                Log.v("tag", "populateChildren");
+            } catch (Exception e) {
+                Log.v("tag", e.toString());
+            }
             finally {
                 db.endTransaction();
             }
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 db.beginTransaction();
                 for (int i = 0; i < lines.size(); i++) {
-//                    Log.v("tag", Integer.toString(i));
                     String[] split = lines.get(i).split(" ");
                     int gid = Integer.valueOf(split[0]);
                     int cid = Integer.valueOf(split[1]);
@@ -99,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                     db.insert("Games", null, vals);
                 }
                 db.setTransactionSuccessful();
-                Log.v("tag", "hi 3");
+                Log.v("tag", "populateGame");
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v("tag", e.toString());
             }
             finally {
                 db.endTransaction();

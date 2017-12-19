@@ -66,6 +66,8 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
     private boolean timeUp = false;
     private String mTimeUpAnswer;
 
+    private boolean mDisplayHighScoreToast = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -307,8 +309,13 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
 
         if(mCumulativeScore < mHighScore) {
             mHighScore = mCumulativeScore;
-            Toast toast = Toast.makeText(getApplicationContext(), "New high score!!", Toast.LENGTH_SHORT);
-            toast.show();
+            if (mDisplayHighScoreToast) {
+                Toast toast = Toast.makeText(getApplicationContext(), "New high score!!", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            if (!mDisplayHighScoreToast) {
+                mDisplayHighScoreToast = true;
+            }
         }
         TextView highScore = (TextView) findViewById(R.id.highScore);
         highScore.setText(String.valueOf(Math.min(mCumulativeScore, mHighScore)));
