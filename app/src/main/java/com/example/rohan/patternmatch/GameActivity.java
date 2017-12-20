@@ -4,7 +4,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,10 +22,10 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFragment.OnCompleteListener{
     private final int mNumParents = 5;
     // A = circle, C = diamond
-    private final int[] resources = {R.drawable.c1, R.drawable.c2, R.drawable.c3, R.drawable.c4,
+    private final int[] mButtonUnselectedDrawables = {R.drawable.c1, R.drawable.c2, R.drawable.c3, R.drawable.c4,
             R.drawable.c5, R.drawable.d1, R.drawable.d2, R.drawable.d3, R.drawable.d4,
             R.drawable.d5};
-    private final int[] resourcesSelect = {R.drawable.c1s, R.drawable.c2s, R.drawable.c3s, R.drawable.c4s,
+    private final int[] mButtonSelectedDrawables = {R.drawable.c1s, R.drawable.c2s, R.drawable.c3s, R.drawable.c4s,
             R.drawable.c5s, R.drawable.d1s, R.drawable.d2s, R.drawable.d3s, R.drawable.d4s,
             R.drawable.d5s};
     private Random mRNG = new Random();
@@ -449,9 +447,9 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
     private void setButtonIcon(Button btn, char value, int color, boolean selected) {
         int resource;
         if(selected) {
-            resource = resourcesSelect[(value == 'A' ? 0 : 1)*mNumParents + color];
+            resource = mButtonSelectedDrawables[(value == 'A' ? 0 : 1)*mNumParents + color];
         } else {
-            resource = resources[(value == 'A' ? 0 : 1)*mNumParents + color];
+            resource = mButtonUnselectedDrawables[(value == 'A' ? 0 : 1)*mNumParents + color];
         }
         btn.setBackgroundResource(resource);
     }
