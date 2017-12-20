@@ -110,10 +110,22 @@
 
     </LinearLayout>
 
-    <GridLayout
-        android:id="@+id/children"
+    <HorizontalScrollView
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-    </GridLayout>
+        <ScrollView
+            android:scrollbarAlwaysDrawHorizontalTrack="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+            <GridLayout
+                android:id="@+id/children"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </GridLayout>
+        </ScrollView>
+    </HorizontalScrollView>
 
 </LinearLayout>

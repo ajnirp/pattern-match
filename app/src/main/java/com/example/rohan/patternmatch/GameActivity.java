@@ -172,7 +172,8 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
         c.moveToFirst();
         int gamesPlayed = Integer.valueOf(c.getString(1));
         Log.v("Tag: ", "Game: " + String.valueOf(gamesPlayed));
-        mPlayerLevel = gamesPlayed/50 + 1;
+//        mPlayerLevel = gamesPlayed/50 + 1;
+        mPlayerLevel = 21;
 
         c = mDB.rawQuery("SELECT children, columns from LevelStats where level = " + String.valueOf(mPlayerLevel), null);
         c.moveToFirst();
