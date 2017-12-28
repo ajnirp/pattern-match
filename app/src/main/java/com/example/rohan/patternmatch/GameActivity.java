@@ -1,7 +1,9 @@
 package com.example.rohan.patternmatch;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
@@ -66,6 +68,9 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
 
     private boolean mDisplayHighScoreToast = false;
 
+    private GridLayout mChildren;
+    private GridLayout mParents;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +110,10 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
 
 
         setupChildrenAndParents();
+
+        mChildren = (GridLayout) findViewById(R.id.children);
+        mParents = (GridLayout) findViewById(R.id.parents);
+
         mChildButtonIDs = new ArrayList<Integer>();
         mParentButtonIDs = new ArrayList<Integer>();
         mIndividualScoreIDs = new ArrayList<Integer>();
@@ -171,7 +180,7 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
         int gamesPlayed = Integer.valueOf(c.getString(1));
         Log.v("Tag: ", "Game: " + String.valueOf(gamesPlayed));
 //        mPlayerLevel = gamesPlayed/50 + 1;
-        mPlayerLevel = 21;
+        mPlayerLevel = 5;
 
         c = mDB.rawQuery("SELECT children, columns from LevelStats where level = " + String.valueOf(mPlayerLevel), null);
         c.moveToFirst();
@@ -323,8 +332,7 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
     }
 
     private void generateButtons() {
-        GridLayout glParent = (GridLayout) findViewById(R.id.parents);
-        glParent.setColumnCount(mNumColumns);
+        mParents.setColumnCount(mNumColumns);
         ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(64,64);
         params.setMargins(4,4,4,4);
 
@@ -339,12 +347,11 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
                 btn.setLayoutParams(params);
                 setButtonIcon(btn, parent.charAt(j), color, false);
                 setParentClickListener(btn);
-                glParent.addView(btn);
+                mParents.addView(btn);
             }
         }
 
-        GridLayout glChildren = (GridLayout) findViewById(R.id.children);
-        glChildren.setColumnCount(mNumColumns+1);
+        mChildren.setColumnCount(mNumColumns+1);
         for (int i = 0; i < mNumChildren; i++) {
             String child = mChildrenValues.get(i);
             ArrayList<Integer> childColors = mChildrenColors.get(i);
@@ -356,14 +363,14 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
                 btn.setLayoutParams(params);
                 setButtonIcon(btn, child.charAt(j), childColors.get(j), false);
                 setChildClickListener(btn);
-                glChildren.addView(btn);
+                mChildren.addView(btn);
             }
             TextView scoreView = new TextView(this);
             scoreView.setText(String.valueOf(mScores.get(i)));
             int currentID = View.generateViewId();
             mIndividualScoreIDs.add(currentID);
             scoreView.setId(currentID);
-            glChildren.addView(scoreView);
+            mChildren.addView(scoreView);
         }
     }
 
@@ -551,7 +558,8 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
         return result;
     }
 
-    public void toggle(View v) {
+    private void playPauseTimer() {
+        // Handle timer logic
         if (mChronometerRunning) {
             mChronometer.stop();
         } else {
@@ -563,6 +571,25 @@ public class GameActivity extends AppCompatActivity implements TCTimeUpDialogFra
             mChronometer.start();
         }
         mChronometerRunning = !mChronometerRunning;
+    }
+
+    public void playPause(View v) {
+        playPauseTimer();
+        mChildren.setVisibility(View.GONE);
+        mParents.setVisibility(View.GONE);
+
+        // Show popup to pause the game
+        new AlertDialog.Builder(this)
+                .setMessage("Paused!")
+                .setCancelable(false)
+                .setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        GameActivity.this.playPauseTimer();
+                        GameActivity.this.mChildren.setVisibility(View.VISIBLE);
+                        GameActivity.this.mParents.setVisibility(View.VISIBLE);
+                    }
+                })
+                .show();
     }
 
     public void saveGame(View v) {
